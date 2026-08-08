@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
 from pydantic import BaseModel, Field
@@ -29,8 +29,8 @@ class ChatResponse(BaseModel):
 
 
 @app.get("/", include_in_schema=False)
-def index() -> FileResponse:
-    return FileResponse(BASE_DIR / "static" / "index.html")
+def index() -> RedirectResponse:
+    return RedirectResponse(url="/static/index.html")
 
 
 @app.get("/health")
@@ -57,4 +57,3 @@ def chat(request: ChatRequest) -> ChatResponse:
     if not response.output_text:
         raise HTTPException(status_code=502, detail="The AI service returned an empty answer")
     return ChatResponse(message=response.output_text)
-
